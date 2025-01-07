@@ -8,10 +8,12 @@ import Product from '../components/Product';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { useOutletContext } from 'react-router-dom';
 
 function ProductListing() {
 
   const [products, setProducts] = useState([])
+  const { searchQuery } = useOutletContext();
 
   useEffect(()=>{
     axios.get('https://fakestoreapi.com/products')
@@ -22,6 +24,11 @@ function ProductListing() {
       console.log(err)
     })
   }, [])
+
+
+  const filteredProducts = products.filter(product =>
+    product.title.toLowerCase().includes(searchQuery ? searchQuery.toLowerCase() : '')
+  );
 
 
   return (
@@ -43,7 +50,7 @@ function ProductListing() {
         <br />
         <div className ="product-list">
           <Row>
-            {products.map((product, index)=>{
+            {filteredProducts.map((product, index)=>{
               return(
                 <Col xs = {12} sm = {6} md ={4} lg = {3} xxl = {3} key ={index}>
                   <Product productData = {product}/>
